@@ -15,14 +15,14 @@ import useHouseForm, { getFormData } from '../../hooks/useHouseForm';
 import FilesFields from './FilesFields';
 import { useHistory } from 'react-router-dom';
 
-let data_ref_files = []
+let data_ref_files = [];
 
 export default function CreateHomeForm() {
   const classes = useStyles();
   const HouseContext = useHouseDispatch();
   const { openAlert } = useAlertDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const [ files_reset, setFilesReset ] = useState(true);
+  const [files_reset, setFilesReset] = useState(true);
 
   const {
     filesGroups = [],
@@ -39,12 +39,12 @@ export default function CreateHomeForm() {
       message: `House #${data.idHouse} created successfully!`,
     });
     resetForm(initialValues);
-    setFilesReset(!files_reset)
+    setFilesReset(!files_reset);
 
     setTimeout(() => {
-       setFilesReset(true)
+      setFilesReset(true);
     }, 100);
-    
+
     history.push('/');
   }, []);
 
@@ -59,7 +59,7 @@ export default function CreateHomeForm() {
 
   const onSubmit = useCallback(async (values, { setSubmitting, resetForm }) => {
     const { houseFiles, formData } = getFormData(values);
- 
+
     try {
       setSubmitting(true);
       setIsLoading(true);
@@ -121,13 +121,13 @@ export default function CreateHomeForm() {
                     dependencies={dependencies}
                   />
                   <Divider variant="middle" />
-                  { files_reset &&
-                  <FilesFields
-                    {...{ values, isLoading, setFieldValue }}
-                    filesGroups={filesGroups}
-                    data_ref_files={data_ref_files}
-                  />
-                  }
+                  {files_reset && (
+                    <FilesFields
+                      {...{ values, isLoading, setFieldValue }}
+                      filesGroups={filesGroups}
+                      data_ref_files={data_ref_files}
+                    />
+                  )}
                   <Divider variant="middle" />
                   <Grid item xs={12}>
                     <Button
@@ -149,5 +149,4 @@ export default function CreateHomeForm() {
       </Formik>
     </div>
   );
-  
 }

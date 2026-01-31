@@ -10,7 +10,7 @@ const HouseStateContext = React.createContext();
 const HouseDispatchContext = React.createContext();
 
 function HouseReducer(state, { type, houses, houseSelected, house }) {
-  console.log('=======HOUSE REDUCER=======');
+  console.log('=======HOUSE REDUCERS --=======');
   switch (type) {
     case 'houses': {
       console.log(`Houses: `, houses);
@@ -82,14 +82,14 @@ function HouseContext({ children }) {
 
   const getHouseFolder = useCallback(async ({ house, files = [] }) => {
     console.log('==== GETTING HOUSE FOLDER ====');
-    const { idHouse, zone, address , idHr, lastName , builder } = house;
-   
+    const { idHouse, zone, address, idHr, lastName, builder } = house;
+
     let houseFolder = '';
     if (files.length) {
       const fileFromDrive = await API.uplaodFilesGroups({
         zone,
         houseFiles: files,
-        idHouse:`${idHr} / ${lastName} / ${address} |${house.files}`,
+        idHouse: `${idHr} / ${lastName} / ${address} |${house.files}`,
       });
       houseFolder = fileFromDrive.folder;
     } else {
@@ -105,7 +105,7 @@ function HouseContext({ children }) {
     console.log(`Response Data: `, data);
     if (!ok) return { error: data };
     const houseFolder = await getHouseFolder({ house: data, files });
-   
+
     const { idHouse } = data;
     const description = 'House Created';
     const status = 'INITIAL';

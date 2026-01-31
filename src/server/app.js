@@ -6,9 +6,9 @@ export function isAdmin() {
     'suarez.andres@correounivalle.edu.co',
     'samuel.ramirez@correounivalle.edu.co',
     'hrdrywall.system@gmail.com',
-    'cristian.machado@correounivalle.edu.co'
+    'cristian.machado@correounivalle.edu.co',
   ];
- 
+
   const isGuessAdmin = admins.indexOf(String(guessEmail)) >= 0;
 
   return isGuessAdmin;
@@ -53,7 +53,7 @@ function getHousesSheet() {
 export function getHouseFiles(house) {
   if (!house.files) return house;
   const newHouse = { ...house };
-  const { idHouse, address, zone , idHr , lastName , builder } = newHouse;
+  const { idHouse, address, zone, idHr, lastName, builder } = newHouse;
   Logger.log('newHouse');
   const folder = global.getHouseFolder({
     zone,
@@ -111,7 +111,7 @@ export function getZones() {
 }
 
 export function getComments() {
-  Logger.log('=============Getting Comments===========');
+  Logger.log('=============Getting-Comments===========');
   return getEntityData('COMMENTS');
 }
 
@@ -180,9 +180,7 @@ function registerHouse(data) {
   sheet.appendRow(houseValues);
   zoneSheet.appendRow(zoneValues);
 
-  const valueToExtraSheet = [[
-    houseJSON.idHr, houseJSON.address
-  ]];
+  const valueToExtraSheet = [[houseJSON.idHr, houseJSON.address]];
 
   const extraSheets = new Array(4);
   extraSheets.push('ACCOUNT RECIEVABLE');
@@ -288,16 +286,20 @@ function searchEntity({ name, getEntitySheet, entityId, idGetter }) {
   };
 
   const dataSheet = sheet.getRange('A:A').getValues();
-  let entityIndex = dataSheet?.map((e,index) => {
-        if (parseInt(e[0]) == parseInt(entityId)) {
-          return index + 1;
-        }
-        return -1;
-  }).filter((e) => {return e !== -1})[0]
-  
+  let entityIndex = dataSheet
+    ?.map((e, index) => {
+      if (parseInt(e[0]) == parseInt(entityId)) {
+        return index + 1;
+      }
+      return -1;
+    })
+    .filter(e => {
+      return e !== -1;
+    })[0];
+
   //TODO: Search Logic before
   // const { index: entityIndex } = global.findText({ sheet, text: entityId });
-  
+
   if (entityIndex <= -1) return result;
 
   const entityRange = sheet.getSheetValues(
@@ -309,7 +311,7 @@ function searchEntity({ name, getEntitySheet, entityId, idGetter }) {
   Logger.log(`${name} Range: ${entityRange.length}`);
   Logger.log(entityRange);
   const [entityData] = global.sheetValuesToObject(entityRange, headers);
-  
+
   const isSameDocument = String(idGetter(entityData)) === String(entityId);
   if (!isSameDocument) return result;
 
@@ -348,7 +350,7 @@ function updateEntity({
   try {
     const response = { ok: false, data: null };
     const form = JSON.parse(serializedData);
-    
+
     const { data, index } = findEntity(idGetter(form));
     if (!index) throw new Error(`${name} does not exists`);
     const { sheet, headers } = getEntitySheet();
@@ -356,15 +358,24 @@ function updateEntity({
 
     if (index < 0) {
       const dataSheet = sheet.getRange('A:A').getValues();
-      indexSearch = dataSheet?.map((e,index) => {
-            if (parseInt(e[0]) == parseInt(form.idHouse)) {
-              return index + 1;
-            }
-            return -1;
-      }).filter((e) => {return e !== -1})[0]
+      indexSearch = dataSheet
+        ?.map((e, index) => {
+          if (parseInt(e[0]) == parseInt(form.idHouse)) {
+            return index + 1;
+          }
+          return -1;
+        })
+        .filter(e => {
+          return e !== -1;
+        })[0];
     }
 
-    const entityRange = sheet.getRange(+indexSearch, 1, 1, sheet.getLastColumn());
+    const entityRange = sheet.getRange(
+      +indexSearch,
+      1,
+      1,
+      sheet.getLastColumn()
+    );
     const entityData = global.jsonToSheetValues({ ...data, ...form }, headers);
     entityRange.setValues([entityData]);
 
@@ -394,7 +405,6 @@ export function updateComment(serializedData) {
     findEntity: searchComment,
     serializedData,
     getEntitySheet: getCommentsSheet,
-    
   });
 }
 
@@ -520,8 +530,6 @@ export function createClieaner(formString) {
   }
 }
 
-
-
 export function createHouse(formString) {
   const form = JSON.parse(formString);
   if (!form || !Object.keys(form).length) throw new Error('No data sent');
@@ -543,13 +551,21 @@ export function createHouse(formString) {
 export function createCalendarEvent(event_params) {
   const form = JSON.parse(event_params);
   if (!form || !Object.keys(form).length) throw new Error('No data sent');
-  
-  const { title, description, start_ , end_, location, email , idCalendar } = form;
+
+  const {
+    title,
+    description,
+    start_,
+    end_,
+    location,
+    email,
+    idCalendar,
+  } = form;
   Logger.log('Data for registering');
   //mostrar la info en el log
   Logger.log(form);
   Logger.log(idCalendar);
- 
+
   const calendar = CalendarApp.getCalendarById(idCalendar);
   const calendarId = calendar.getId();
 
@@ -558,23 +574,21 @@ export function createCalendarEvent(event_params) {
     description,
     location,
     start: {
-      date: start_
+      date: start_,
     },
     end: {
-      date: start_
+      date: start_,
     },
     reminders: {
       useDefault: false,
-      overrides: [
-        { method: 'popup', minutes: 8 * 24 * 60 }
-      ]
-    }
+      overrides: [{ method: 'popup', minutes: 8 * 24 * 60 }],
+    },
   };
 
   const event = Calendar.Events.insert(resource, calendarId);
 
   return event;
-};
+}
 
 export function getDataOthers() {
   return getEntityData('OTHERS');
